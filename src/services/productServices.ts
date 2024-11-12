@@ -13,7 +13,7 @@ export class ProductService {
 
     // 获取所有产品（分页）
     public getProductsByPage = async (page: number, limit: number): Promise<Document[]> => {
-        return await ProductsModel.find()
+        return await ProductsModel.find({ deleted: { $ne: true } })
             .skip((page - 1) * limit)
             .limit(limit);
     };
@@ -21,7 +21,8 @@ export class ProductService {
     // 获取所有产品数量 estimatedDocumentCount() 
     // https://www.mongodb.com/zh-cn/docs/manual/reference/method/db.collection.estimatedDocumentCount/
     public getProductsCount = async (): Promise<number> => {
-        return await ProductsModel.estimatedDocumentCount();
+        // return await ProductsModel.estimatedDocumentCount();
+        return await ProductsModel.countDocuments({ deleted: { $ne: true } });
     }
 
     // 获取单个产品

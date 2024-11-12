@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, './public')));
 
 
 app.get('/', (req: Request, res: Response) => {
-  res.render('index', { title: '产品管理' });
+  res.render('index');
 });
 
 app.post('/', (req: Request, res: Response) => {

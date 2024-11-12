@@ -16,11 +16,13 @@ productRouter.get('/products/edit/:id', productController.showEditProductPage);
 productRouter.post('/products/update/:id', productController.handleEditProductForm);
 
 // 获取所有产品
-productRouter.get('/products', productController.getProductsByPage);
+productRouter.get('/products', productController.showProductsByPage);
 
 // 获取产品详情
-productRouter.get('/products/detail/:id', productController.getProductsById);
-productRouter.get('/products/delete/:id', productController.deleteProductById);
+productRouter.get('/products/:id', productController.showProductInfoPage);
+
+// 删除产品
+productRouter.post('/products/remove/:id', productController.deleteProductById);
 
 // 导出路由实例
 export default productRouter;

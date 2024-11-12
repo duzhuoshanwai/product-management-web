@@ -5,7 +5,7 @@ export interface ProductInterface {
     name: string;
     description: string;
     price: number;
-    tag: string[]; //支持多个分类
+    tags: string[]; //支持多个分类
     deleted: boolean;
 }
 
@@ -13,7 +13,7 @@ const productSchema = new Schema<ProductInterface & Document>({
     name: { type: String, required: true },
     description: {type: String, required: true },
     price: {type: Number, required: true },
-    tag: {type: [String], required: false},
+    tags: {type: [String], required: false},
     deleted: {type: Boolean, required: false, default: false }
 },
     { timestamps: true }// 自动添加createdAt和updatedAt字段
@@ -24,7 +24,7 @@ export const productValidationSchema = Joi.object({
     name: Joi.string().min(2).max(100).required(),
     description: Joi.string().min(10).max(500).required(),
     price: Joi.number().min(0).required(),
-    tag: Joi.array().items(Joi.string().min(1).max(50)).optional(), 
+    tags: Joi.array().items(Joi.string().min(1).max(50)).optional(), 
     deleted: Joi.boolean().optional() 
 });
 
