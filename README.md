@@ -1,6 +1,7 @@
 # product-management-web
 
-Express + MongoDB
+Express + MongoDB + Passport 策略jwt
 
-接口部分已完成，视图部分还没写。
+视图使用Bootstrap5 赞美大模型
 
+demo: [https://pmw-test.duzhuo.icu/](https://pmw-test.duzhuo.icu/)
