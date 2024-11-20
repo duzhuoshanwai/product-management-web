@@ -1,11 +1,20 @@
 import { ProductService } from "../services/productServices";
 import { Request, Response } from "express";
 import { productValidationSchema } from "../models/Product"; // 导入 Joi 验证器
+import dayjs from 'dayjs';
+import { ProductInterface } from "../models/Product";
 
 const productService = new ProductService();
 
 export class ProductController {
     private productService: ProductService;
+
+    private sanitizeProductData = (product: ProductInterface): Omit<ProductInterface, 'createdAt' | 'updatedAt'> => {
+        const formattedCreatedAt = dayjs(product.createdAt).format('YYYY-MM-DD HH:mm:ss');
+        const formattedUpdatedAt = dayjs(product.updatedAt).format('YYYY-MM-DD HH:mm:ss');
+        const { createdAt, updatedAt, ...sanitizedProduct } = product;
+        return { ...sanitizedProduct, createdAt_modified: formattedCreatedAt, updatedAt_modified: formattedUpdatedAt } as Omit<ProductInterface, 'createdAt' | 'updatedAt'> & { createdAt_modified: string; updatedAt_modified: string };
+    };
 
     constructor() {
         this.productService = new ProductService();
@@ -75,9 +84,15 @@ export class ProductController {
         try {
             const id = req.params.id;
             const product = await productService.getProductById(id);
-            res.render('product-info', {response:{ product} });
+            if (product) {
+                const sanitizeProductData = this.sanitizeProductData(product);
+                console.log(this.sanitizeProductData(product));
+                res.render('product-info', { response: { product, sanitizeProductData } });
+            } else {
+                console.log('Product is null');
+            }
         } catch (error) {
-            res.render('product-info',{ response :{message: '根据id获取产品失败', error }});
+            res.render('product-info', { response: { message: '根据id获取产品失败', error } });
         }
     };
 
@@ -97,9 +112,9 @@ export class ProductController {
         try {
             const id = req.params.id;
             await productService.deleteProductById(id);
-            res.status(200).send('<script>alert("产品删除成功");window.location.href = document.referrer;</script>');
+            res.status(200).json({ success: true, message: '产品删除成功' });
         } catch (error) {
-            res.status(500).send('<script>alert("产品删除失败");window.location.href = document.referrer;</script>');
+            res.status(500).json({ success: false, message: '产品删除失败' });
         }
     };
 }

@@ -2,7 +2,7 @@ import { ProductsModel, ProductInterface } from "../models/Product";
 
 export class ProductService {
     // 创建产品
-    public createProduct = async (product: any): Promise<Document> => {
+    public createProduct = async (product: any): Promise<ProductInterface | null> => {
         return await ProductsModel.create(product);
     };
 
@@ -26,17 +26,17 @@ export class ProductService {
     }
 
     // 获取单个产品
-    public getProductById = async (id: string): Promise<Document | null> => {
+    public getProductById = async (id: string): Promise<ProductInterface | null> => {
         return await ProductsModel.findById(id);
     };
 
     // 更新产品
-    public updateProductById = async (id: string, product: ProductInterface): Promise<Document | null> => {
+    public updateProductById = async (id: string, product: ProductInterface): Promise<ProductInterface | null> => {
         return await ProductsModel.findByIdAndUpdate(id, product, { new: true });
     };
 
     // 删除产品（软删除）
-    public deleteProductById = async (id: string): Promise<Document | null> => {
+    public deleteProductById = async (id: string): Promise<ProductInterface | null> => {
         return await ProductsModel.findByIdAndUpdate(id, { deleted: true }, { new: true });
     };
 }

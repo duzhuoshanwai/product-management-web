@@ -23,10 +23,10 @@
         </strong>
         <div class="d-flex justify-content-end">
           <div class="btn-group" role="group">
-            <form action="/products/remove/<%= product.id %>" method="POST" class="d-inline">
-            <a href="/products/<%= product.id %>" class="btn btn-info" role="button">详情</a>
-            <a href="/products/edit/<%= product.id %>" class="btn btn-warning" role="button">修改</a>
-            <button type="submit" onclick="return confirm('确定要删除吗？')" class="btn btn-danger">删除</button>
+            <form action="/products/remove/<%= product.id %>" method="POST" class="d-inline" onsubmit="handleDelete(event, '<%= product.id %>'); return false;"> <a href="/products/<%= product.id %>" class="btn btn-info" role="button">详情</a>
+              <a href="/products/<%= product.id %>" class="btn btn-info" role="button">详情</a>
+              <a href="/products/edit/<%= product.id %>" class="btn btn-warning" role="button">修改</a>
+              <button type="submit" class="btn btn-danger">删除</button>
             </form>
           </div>
         </div>
@@ -49,6 +49,43 @@
       </div>
     </div>
   </div>
+  <script>
+    async function handleDelete(event, productId) {
+      event.preventDefault(); // 阻止表单提交
+  
+      if (confirm('确定要删除吗？')) {
+        try {
+          const response = await fetch(`/products/remove/${productId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+  
+          const result = await response.json();
+          if (result.success) {
+            alert(result.message);
+            // 保存当前滚动位置
+            localStorage.setItem('scrollPosition', window.scrollY.toString());
+            window.location.href = window.location.href; // 重新加载当前页面
+          } else {
+            alert(result.message);
+          }
+        } catch (error) {
+          alert('产品删除失败');
+        }
+      }
+    }
+  
+    // 页面加载时恢复滚动位置
+    window.onload = function() {
+      const scrollPosition = localStorage.getItem('scrollPosition');
+      if (scrollPosition) {
+        window.scrollTo(0, parseInt(scrollPosition));
+        localStorage.removeItem('scrollPosition'); // 清除保存的滚动位置
+      }
+    };
+  </script>
 </body>
 
 </html>
