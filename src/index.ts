@@ -1,4 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
 import dotenv from 'dotenv';
 import { connectToMongoDB } from './models/db';
 import productRouter from './routers/productRouter';
@@ -9,6 +10,9 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import jwtStrategy from './middlewares/jwtMiddleware';
 import { renderIndex } from './controllers/indexController';
+import { createEnvFileIfNotExists } from './utils/createEnvFile';
+
+createEnvFileIfNotExists();
 
 const config = dotenv.config().parsed;
 
@@ -17,14 +21,15 @@ const mongoUri: string = config ? config.MONGO_URI : (() => { throw new Error('N
 const mongoClient = connectToMongoDB(mongoUri);
 
 const app = express();
-const port = config.PORT || 8000;
+const PORT = parseInt(config.PORT) || 8000;
+const HOST = config.HOST || '0.0.0.0';
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('combined'));
 // passport 初始化
 app.use(passport.initialize());
-passport.use('jwt',jwtStrategy);
+passport.use('jwt', jwtStrategy);
 
 // 配置视图引擎和视图目录
 app.set('view engine', 'ejs');
@@ -39,8 +44,8 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use('/', authRouter);
-app.use('/', passport.authenticate('jwt', { session: false,failureRedirect:'/' }), productRouter);
+app.use('/', passport.authenticate('jwt', { session: false, failureRedirect: '/' }), productRouter);
 
-app.listen(port, () => {
-  console.log(`Server is Fire at http://localhost:${port}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server is Fire at http://localhost:${PORT}`);
 });
