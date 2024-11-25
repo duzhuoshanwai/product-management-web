@@ -52,7 +52,7 @@
   <script>
     async function handleDelete(event, productId) {
       event.preventDefault(); // 阻止表单提交
-  
+
       if (confirm('确定要删除吗？')) {
         try {
           const response = await fetch(`/products/remove/${productId}`, {
@@ -61,7 +61,7 @@
               'Content-Type': 'application/json'
             }
           });
-  
+
           const result = await response.json();
           if (result.success) {
             alert(result.message);
@@ -76,7 +76,7 @@
         }
       }
     }
-  
+
     // 页面加载时恢复滚动位置
     window.onload = function() {
       const scrollPosition = localStorage.getItem('scrollPosition');

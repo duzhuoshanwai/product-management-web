@@ -38,7 +38,7 @@ class AuthController {
             if (user) {
                 const token = jwt.sign({ id: user.id, username: user.username }, this.jwtSecret, { expiresIn: '12h' });
                 res.cookie('jwt', token, { httpOnly: true, secure: false });
-                res.status(200).json({ code: 200, message: '登录成功，欢迎回来，${user.username}！' });
+                res.status(200).json({ code: 200, message: `登录成功，欢迎回来，${user.username}！` });
             } else {
                 res.status(401).json({ code: 401, message: '登录失败' });
             }
