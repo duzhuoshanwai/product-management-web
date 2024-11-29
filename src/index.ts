@@ -26,7 +26,18 @@ const HOST = config.HOST || '0.0.0.0';
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(morgan('combined'));
+
+// 自定义格式化函数，用于记录客户端的真实IP地址
+morgan.token('real-ip', (req) => {
+  return req.headers['x-real-ip'] as string;
+});
+
+// 自定义日志格式
+const logFormat = ':real-ip - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"';
+
+// 使用自定义格式化函数和日志格式
+app.use(morgan(logFormat));
+
 // passport 初始化
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
