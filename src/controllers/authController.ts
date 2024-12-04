@@ -37,7 +37,13 @@ class AuthController {
             const user = await this.userService.login(username, password);
             if (user) {
                 const token = jwt.sign({ id: user.id, username: user.username }, this.jwtSecret, { expiresIn: '12h' });
-                res.cookie('jwt', token, { httpOnly: true, secure: false });
+                // 设置 Cookie
+                res.cookie('jwt', token, {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: 'strict', // 防止 CSRF 攻击
+                    maxAge: 12 * 60 * 60 * 1000 // 12 小时（以毫秒为单位）
+                });
                 res.status(200).json({ code: 200, message: `登录成功，欢迎回来，${user.username}！` });
             } else {
                 res.status(401).json({ code: 401, message: '登录失败' });
